@@ -62,6 +62,7 @@ python3 load_bands.py          # carga B8A/B12 y aplica la máscara de nubes (is
 python3 preview_bands.py       # guarda data/bands_preview.png, para verificar a simple vista
 python3 calculate_severity.py  # calcula NBR, dNBR y clasifica severidad (issue #5)
 python3 vectorize_severity.py  # vectoriza a polígonos y calcula hectáreas por clase (issue #6)
+python3 validate.py            # compara contra el perímetro oficial de Copernicus EMS (issue #7)
 ```
 
 Tests (no requieren red ni datos reales):
@@ -79,7 +80,7 @@ python3 -m pytest
 - [x] #4 Carga de bandas y máscara de nubes
 - [x] #5 NBR, dNBR y clases de severidad
 - [x] #6 Vectorización y estadísticas
-- [ ] #7 Validación
+- [x] #7 Validación
 - [ ] #8 PostGIS en Docker
 - [ ] #9 API con FastAPI
 - [ ] #10 Visor React + Leaflet
