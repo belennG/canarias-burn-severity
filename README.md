@@ -65,6 +65,14 @@ python3 vectorize_severity.py  # vectoriza a polígonos y calcula hectáreas por
 python3 validate.py            # compara contra el perímetro oficial de Copernicus EMS (issue #7)
 ```
 
+Base de datos (PostGIS, en Docker):
+
+```bash
+docker compose up -d
+cd pipeline
+python3 load_to_postgis.py  # carga severity.geojson a la tabla severity_polygons (issue #8)
+```
+
 Tests (no requieren red ni datos reales):
 
 ```bash
@@ -81,7 +89,7 @@ python3 -m pytest
 - [x] #5 NBR, dNBR y clases de severidad
 - [x] #6 Vectorización y estadísticas
 - [x] #7 Validación
-- [ ] #8 PostGIS en Docker
+- [x] #8 PostGIS en Docker
 - [ ] #9 API con FastAPI
 - [ ] #10 Visor React + Leaflet
 - [ ] #11 Comparador antes/después y panel

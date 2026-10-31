@@ -21,3 +21,8 @@ matplotlib
 
 # Tests
 pytest
+
+# Carga a PostGIS
+sqlalchemy
+psycopg2-binary
+geoalchemy2
