@@ -1,0 +1,20 @@
+# Pipeline de procesamiento (pipeline/)
+# Búsqueda de escenas Sentinel-2 vía STAC
+pystac-client
+planetary-computer
+
+# Carga de bandas raster como arrays etiquetados
+stackstac
+rioxarray
+rasterio
+xarray
+dask[array]
+
+# Vectorización, geometría y estadísticas por zona
+geopandas
+shapely
+pyproj
+
+# Cálculo numérico y figuras
+numpy
+matplotlib
