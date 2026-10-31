@@ -53,17 +53,32 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-(Los pasos para correr el pipeline completo se irán documentando aquí a medida que se
-implementen los issues #3–#6.)
+Los scripts se corren desde `pipeline/`, en orden:
+
+```bash
+cd pipeline
+python3 search_scenes.py       # busca las escenas con menos nubes (issue #3)
+python3 load_bands.py          # carga B8A/B12 y aplica la máscara de nubes (issue #4)
+python3 preview_bands.py       # guarda data/bands_preview.png, para verificar a simple vista
+python3 calculate_severity.py  # calcula NBR, dNBR y clasifica severidad (issue #5)
+python3 vectorize_severity.py  # vectoriza a polígonos y calcula hectáreas por clase (issue #6)
+```
+
+Tests (no requieren red ni datos reales):
+
+```bash
+cd pipeline
+python3 -m pytest
+```
 
 ## Estado del proyecto
 
 - [x] #1 Estructura del repo y entorno
 - [x] #2 Área de estudio y fechas
-- [ ] #3 Búsqueda de escenas Sentinel-2
-- [ ] #4 Carga de bandas y máscara de nubes
-- [ ] #5 NBR, dNBR y clases de severidad
-- [ ] #6 Vectorización y estadísticas
+- [x] #3 Búsqueda de escenas Sentinel-2
+- [x] #4 Carga de bandas y máscara de nubes
+- [x] #5 NBR, dNBR y clases de severidad
+- [x] #6 Vectorización y estadísticas
 - [ ] #7 Validación
 - [ ] #8 PostGIS en Docker
 - [ ] #9 API con FastAPI

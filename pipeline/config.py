@@ -35,3 +35,18 @@ STAC_COLLECTION = "sentinel-2-l2a"
 # una ventana de ~3-4 semanas); se ajusta en el issue #3 según lo que
 # devuelva realmente la búsqueda para esta área y estas fechas.
 MAX_CLOUD_COVER = 20
+
+# Clases de severidad por dNBR, según los umbrales USGS (Key & Benson, FIREMON),
+# expresados en la escala nativa de NBR [-1, 1] en vez del entero x1000 original
+# de la publicación. Cada tupla es (nombre, mínimo incluido, máximo excluido).
+# Los límites son contiguos a propósito (el máximo de una clase es el mínimo
+# de la siguiente) para que ningún valor de dNBR quede sin clasificar.
+SEVERITY_THRESHOLDS = [
+    ("Rebrote alto", -2.000, -0.250),
+    ("Rebrote bajo", -0.250, -0.100),
+    ("No quemado", -0.100, 0.100),
+    ("Severidad baja", 0.100, 0.270),
+    ("Severidad moderada-baja", 0.270, 0.440),
+    ("Severidad moderada-alta", 0.440, 0.660),
+    ("Severidad alta", 0.660, 2.000),
+]
