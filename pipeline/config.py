@@ -8,10 +8,15 @@
 # Es una caja aproximada a partir de los municipios afectados reportados por
 # Protección Civil (Gobierno de Canarias). El perímetro oficial está en el
 # producto "Grading" de la activación Copernicus EMS EMSR685 (AOI 01
-# Candelaria, imagen del 26/08/2023): se usará para refinar este bbox y
-# como referencia en la validación (issue #7).
+# Candelaria, imagen del 26/08/2023), usado como referencia en la validación
+# (issue #7).
 # https://mapping.emergency.copernicus.eu/activations/EMSR685/download
-BBOX = [-16.75, 28.10, -16.25, 28.40]
+#
+# El borde norte (28.40) se corrigió en el issue #7: el perímetro oficial
+# llega hasta latitud ~28.4546, así que la caja original dejaba ~23% del
+# incendio real (2.864 ha) fuera de la zona descargada/procesada. 28.60 le da
+# el mismo margen que ya tenían los otros tres bordes.
+BBOX = [-16.75, 28.10, -16.25, 28.60]
 
 # Ventanas de búsqueda de escenas Sentinel-2 L2A.
 # El incendio empezó la noche del 15/08/2023 y quedó estabilizado hacia

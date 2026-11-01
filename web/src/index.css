@@ -1,0 +1,85 @@
+:root {
+  color-scheme: light;
+  font: 16px/1.4 system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #fff;
+  color: #111;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+header {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+
+header h1 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: #111;
+}
+
+.status {
+  margin: 2rem auto;
+  color: #111;
+}
+
+.status-error {
+  color: #a50026;
+}
+
+.map-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}
+
+.legend {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1rem;
+  z-index: 1000;
+  background: #fffc;
+  backdrop-filter: blur(2px);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  font-size: 0.85rem;
+  color: #111;
+}
+
+.legend ul {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  line-height: 1.5;
+}
+
+.legend-swatch {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1px solid #0003;
+  border-radius: 2px;
+  flex: none;
+}

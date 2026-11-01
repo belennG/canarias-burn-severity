@@ -45,6 +45,11 @@ Copernicus EMS [EMSR685](https://mapping.emergency.copernicus.eu/activations/EMS
 área, las ventanas de fechas y la superficie oficial de referencia están en
 [`pipeline/config.py`](pipeline/config.py), no hardcodeadas en el código de procesamiento.
 
+El `BBOX` se corrigió después del issue #7: la validación contra el perímetro oficial mostró
+que el borde norte original (lat. 28.40) dejaba ~23% del incendio real (2.864 ha) fuera de la
+zona descargada. Con el borde corregido (28.60) el pipeline (#3-#8) se volvió a correr
+completo y la cobertura oficial pasó a 100% (antes 79.8%) y el IoU de 60.9% a 73.9%.
+
 ## Cómo correrlo
 
 ```bash
@@ -81,8 +86,20 @@ uvicorn main:app --reload --port 8000
 ```
 
 - `GET /health` — healthcheck
-- `GET /severity` — los 12.982 polígonos como GeoJSON (`?severity=` filtra por clase, p. ej. `Severidad alta`)
+- `GET /severity` — los 21.602 polígonos como GeoJSON (`?severity=` filtra por clase, p. ej. `Severidad alta`)
 - `GET /severity/stats` — hectáreas y cantidad de polígonos por clase
+
+Visor (React + Vite + Leaflet, issue #10) — necesita la API corriendo:
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Abre `http://localhost:5173` y dibuja los 21.602 polígonos de `GET /severity`
+sobre un mapa de OpenStreetMap, coloreados por clase de severidad, con una
+leyenda y un popup por polígono (clase y hectáreas) al hacer clic.
 
 Tests (no requieren red ni datos reales):
 
@@ -105,7 +122,7 @@ python3 -m pytest
 - [x] #7 Validación
 - [x] #8 PostGIS en Docker
 - [x] #9 API con FastAPI
-- [ ] #10 Visor React + Leaflet
+- [x] #10 Visor React + Leaflet
 - [ ] #11 Comparador antes/después y panel
 - [ ] #12 Deploy
 - [ ] #13 README final
