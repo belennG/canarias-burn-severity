@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { API_URL, REPORTED_AREA_HA } from "./config"
+import { REPORTED_AREA_HA, STATS_URL } from "./config"
 import { BURNED_CLASSES, SEVERITY_COLORS, type SeverityStats } from "./severity"
 
 // useGrouping explícito: "auto" (el default) no pone separador de miles en
@@ -10,7 +10,7 @@ export default function StatsPanel() {
   const [stats, setStats] = useState<SeverityStats[] | null>(null)
 
   useEffect(() => {
-    fetch(`${API_URL}/severity/stats`)
+    fetch(STATS_URL)
       .then((res) => res.json())
       .then(setStats)
       .catch(() => setStats(null))

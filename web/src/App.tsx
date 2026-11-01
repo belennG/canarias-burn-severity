@@ -1,6 +1,6 @@
 import type { FeatureCollection } from "geojson"
 import { useEffect, useState } from "react"
-import { API_URL } from "./config"
+import { API_URL, IS_STATIC_BUILD, SEVERITY_URL } from "./config"
 import Compare from "./Compare"
 import SeverityMap from "./SeverityMap"
 import StatsPanel from "./StatsPanel"
@@ -14,7 +14,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("mapa")
 
   useEffect(() => {
-    fetch(`${API_URL}/severity`)
+    fetch(SEVERITY_URL)
       .then((res) => {
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
         return res.json()
@@ -42,7 +42,9 @@ export default function App() {
       {status === "cargando" && <p className="status">Cargando polígonos…</p>}
       {status === "error" && (
         <p className="status status-error">
-          No se pudo conectar con la API ({API_URL}). ¿Está corriendo <code>uvicorn</code>?
+          {IS_STATIC_BUILD
+            ? "No se pudieron cargar los datos estáticos."
+            : `No se pudo conectar con la API (${API_URL}). ¿Está corriendo uvicorn?`}
         </p>
       )}
       {status === "ok" && data && tab === "mapa" && (

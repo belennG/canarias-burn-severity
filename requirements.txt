@@ -18,6 +18,7 @@ pyproj
 # Cálculo numérico y figuras
 numpy
 matplotlib
+Pillow  # recompresión a JPEG en pipeline/export_static.py (issue #12)
 
 # Tests
 pytest

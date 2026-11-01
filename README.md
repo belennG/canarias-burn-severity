@@ -50,6 +50,19 @@ que el borde norte original (lat. 28.40) dejaba ~23% del incendio real (2.864 ha
 zona descargada. Con el borde corregido (28.60) el pipeline (#3-#8) se volvió a correr
 completo y la cobertura oficial pasó a 100% (antes 79.8%) y el IoU de 60.9% a 73.9%.
 
+## Notas para más adelante (ver issue #13)
+
+- **Margen del BBOX elegido a mano**: los 4 bordes de `BBOX` (`pipeline/config.py`) son números
+  redondos en grados, elegidos a ojo. Más prolijo: bounds del perímetro oficial + buffer fijo en
+  metros (ej. 2 km) en la proyección métrica, para que el margen sea una decisión explícita y
+  reproducible.
+- **Dos "oficial" distintos, sin aclarar**: el panel de stats del visor compara el área detectada
+  contra `REPORTED_AREA_HA` (14.751 ha, cifra de prensa de Protección Civil), mientras que
+  `validate.py` compara contra el polígono exacto de Copernicus EMS (12.273,95 ha) — son fuentes
+  distintas que no coinciden entre sí, y hoy conviven sin que quede claro en la UI/README cuál es
+  cuál. Por eso el visor muestra 72% y la validación 79% de cobertura: no es un error, son
+  denominadores distintos, pero conviene aclararlo (en el panel, o al menos en el README final).
+
 ## Cómo correrlo
 
 ```bash
@@ -70,6 +83,8 @@ python3 vectorize_severity.py  # vectoriza a polígonos y calcula hectáreas por
 python3 validate.py            # compara contra el perímetro oficial de Copernicus EMS (issue #7)
 python3 export_truecolor.py    # guarda data/rgb_before.png y rgb_after.png, color verdadero (issue #11)
 ```
+
+(`export_static.py`, para el deploy, va después — necesita la API corriendo, ver más abajo.)
 
 Base de datos (PostGIS, en Docker):
 
@@ -105,6 +120,27 @@ hectáreas por clase (`GET /severity/stats`) y un popup por polígono al hacer
 clic. Pestaña **Antes / después**: comparador con slider entre las imágenes
 de color verdadero antes/después del incendio.
 
+Deploy a Netlify (issue #12) — el frontend desplegado usa datos **estáticos**,
+no la API (que solo corre local, con `docker compose`):
+
+```bash
+# con la API local corriendo (docker compose up -d + uvicorn):
+cd pipeline
+python3 export_static.py   # snapshot de /severity, /severity/stats y las
+                            # imágenes a web/public/ (GeoJSON simplificado,
+                            # imágenes recomprimidas a JPEG)
+
+cd ../web
+npm run build               # usa web/public/*.json|geojson|jpg, no la API
+npm run preview             # probarlo local antes de pushear
+```
+
+`netlify.toml` (en la raíz) le dice a Netlify que la app vive en `web/`: conectar
+el repo, base directory `web`, build command `npm run build`, publish dir `dist`.
+Los archivos generados por `export_static.py` se commitean (no están en
+`.gitignore`, a diferencia de `data/`): Netlify no tiene la base de datos ni la
+API para regenerarlos en su propio build.
+
 Tests (no requieren red ni datos reales):
 
 ```bash
@@ -128,7 +164,7 @@ python3 -m pytest
 - [x] #9 API con FastAPI
 - [x] #10 Visor React + Leaflet
 - [x] #11 Comparador antes/después y panel
-- [ ] #12 Deploy
+- [x] #12 Deploy
 - [ ] #13 README final
 - [ ] #14 Preparación de la entrevista
 - [ ] #15 Clasificador con machine learning (extra)

@@ -16,6 +16,12 @@
 # llega hasta latitud ~28.4546, así que la caja original dejaba ~23% del
 # incendio real (2.864 ha) fuera de la zona descargada/procesada. 28.60 le da
 # el mismo margen que ya tenían los otros tres bordes.
+#
+# NOTA PARA MÁS ADELANTE: estos márgenes se eligieron a mano (números
+# redondos en grados). Más prolijo sería calcularlos programáticamente —
+# bounds del perímetro oficial + buffer fijo en metros (ej. 2 km), en la
+# proyección métrica — para que el margen sea una decisión explícita y
+# reproducible en vez de un número tipeado una vez.
 BBOX = [-16.75, 28.10, -16.25, 28.60]
 
 # Ventanas de búsqueda de escenas Sentinel-2 L2A.

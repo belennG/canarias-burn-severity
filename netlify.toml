@@ -1,0 +1,11 @@
+[build]
+  base = "web"
+  command = "npm run build"
+  publish = "dist"
+
+# App de una sola página (React Router no se usa hoy, pero esto evita 404 en
+# recargas si se agrega más adelante).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
