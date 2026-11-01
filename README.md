@@ -73,10 +73,24 @@ cd pipeline
 python3 load_to_postgis.py  # carga severity.geojson a la tabla severity_polygons (issue #8)
 ```
 
+API (FastAPI, issue #9) — necesita la base de datos corriendo:
+
+```bash
+cd api
+uvicorn main:app --reload --port 8000
+```
+
+- `GET /health` — healthcheck
+- `GET /severity` — los 12.982 polígonos como GeoJSON (`?severity=` filtra por clase, p. ej. `Severidad alta`)
+- `GET /severity/stats` — hectáreas y cantidad de polígonos por clase
+
 Tests (no requieren red ni datos reales):
 
 ```bash
 cd pipeline
+python3 -m pytest
+
+cd api
 python3 -m pytest
 ```
 
@@ -90,7 +104,7 @@ python3 -m pytest
 - [x] #6 Vectorización y estadísticas
 - [x] #7 Validación
 - [x] #8 PostGIS en Docker
-- [ ] #9 API con FastAPI
+- [x] #9 API con FastAPI
 - [ ] #10 Visor React + Leaflet
 - [ ] #11 Comparador antes/después y panel
 - [ ] #12 Deploy

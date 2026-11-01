@@ -26,3 +26,8 @@ pytest
 sqlalchemy
 psycopg2-binary
 geoalchemy2
+
+# API (api/)
+fastapi
+uvicorn[standard]
+httpx  # cliente usado por fastapi.testclient en los tests
