@@ -1,14 +1,17 @@
 import type { FeatureCollection } from "geojson"
 import { useEffect, useState } from "react"
 import { API_URL } from "./config"
-import Legend from "./Legend"
+import Compare from "./Compare"
 import SeverityMap from "./SeverityMap"
+import StatsPanel from "./StatsPanel"
 
 type Status = "cargando" | "ok" | "error"
+type Tab = "mapa" | "comparar"
 
 export default function App() {
   const [status, setStatus] = useState<Status>("cargando")
   const [data, setData] = useState<FeatureCollection | null>(null)
+  const [tab, setTab] = useState<Tab>("mapa")
 
   useEffect(() => {
     fetch(`${API_URL}/severity`)
@@ -28,18 +31,27 @@ export default function App() {
       <header>
         <h1>Severidad del incendio — Tenerife, agosto 2023</h1>
       </header>
+      <nav className="tabs">
+        <button className={tab === "mapa" ? "active" : ""} onClick={() => setTab("mapa")}>
+          Mapa
+        </button>
+        <button className={tab === "comparar" ? "active" : ""} onClick={() => setTab("comparar")}>
+          Antes / después
+        </button>
+      </nav>
       {status === "cargando" && <p className="status">Cargando polígonos…</p>}
       {status === "error" && (
         <p className="status status-error">
           No se pudo conectar con la API ({API_URL}). ¿Está corriendo <code>uvicorn</code>?
         </p>
       )}
-      {status === "ok" && data && (
+      {status === "ok" && data && tab === "mapa" && (
         <div className="map-wrapper">
           <SeverityMap data={data} />
-          <Legend />
+          <StatsPanel />
         </div>
       )}
+      {status === "ok" && data && tab === "comparar" && <Compare />}
     </div>
   )
 }

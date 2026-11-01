@@ -18,3 +18,19 @@ export interface SeverityProperties {
   severity: string
   area_ha: number
 }
+
+export interface SeverityStats {
+  class_id: number
+  severity: string
+  polygon_count: number
+  area_ha: number
+}
+
+// Mismas clases "quemadas" que pipeline/validate.py:BURNED_CLASSES (todo lo
+// que no sea "No quemado" o rebrote de vegetación sana).
+export const BURNED_CLASSES = [
+  "Severidad baja",
+  "Severidad moderada-baja",
+  "Severidad moderada-alta",
+  "Severidad alta",
+]

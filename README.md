@@ -68,6 +68,7 @@ python3 preview_bands.py       # guarda data/bands_preview.png, para verificar a
 python3 calculate_severity.py  # calcula NBR, dNBR y clasifica severidad (issue #5)
 python3 vectorize_severity.py  # vectoriza a polígonos y calcula hectáreas por clase (issue #6)
 python3 validate.py            # compara contra el perímetro oficial de Copernicus EMS (issue #7)
+python3 export_truecolor.py    # guarda data/rgb_before.png y rgb_after.png, color verdadero (issue #11)
 ```
 
 Base de datos (PostGIS, en Docker):
@@ -88,8 +89,9 @@ uvicorn main:app --reload --port 8000
 - `GET /health` — healthcheck
 - `GET /severity` — los 21.602 polígonos como GeoJSON (`?severity=` filtra por clase, p. ej. `Severidad alta`)
 - `GET /severity/stats` — hectáreas y cantidad de polígonos por clase
+- `GET /imagery/rgb_before.png` / `rgb_after.png` — color verdadero antes/después (issue #11)
 
-Visor (React + Vite + Leaflet, issue #10) — necesita la API corriendo:
+Visor (React + Vite + Leaflet, issues #10-#11) — necesita la API corriendo:
 
 ```bash
 cd web
@@ -97,9 +99,11 @@ npm install
 npm run dev
 ```
 
-Abre `http://localhost:5173` y dibuja los 21.602 polígonos de `GET /severity`
-sobre un mapa de OpenStreetMap, coloreados por clase de severidad, con una
-leyenda y un popup por polígono (clase y hectáreas) al hacer clic.
+Abre `http://localhost:5173`. Pestaña **Mapa**: los 21.602 polígonos de
+`GET /severity` sobre OpenStreetMap, coloreados por clase, con un panel de
+hectáreas por clase (`GET /severity/stats`) y un popup por polígono al hacer
+clic. Pestaña **Antes / después**: comparador con slider entre las imágenes
+de color verdadero antes/después del incendio.
 
 Tests (no requieren red ni datos reales):
 
@@ -123,7 +127,7 @@ python3 -m pytest
 - [x] #8 PostGIS en Docker
 - [x] #9 API con FastAPI
 - [x] #10 Visor React + Leaflet
-- [ ] #11 Comparador antes/después y panel
+- [x] #11 Comparador antes/después y panel
 - [ ] #12 Deploy
 - [ ] #13 README final
 - [ ] #14 Preparación de la entrevista

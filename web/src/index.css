@@ -30,6 +30,30 @@ header h1 {
   color: #111;
 }
 
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+
+.tabs button {
+  border: none;
+  background: none;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tabs button.active {
+  color: #111;
+  font-weight: 600;
+  border-bottom-color: #a50026;
+}
+
 .status {
   margin: 2rem auto;
   color: #111;
@@ -49,11 +73,11 @@ header h1 {
   width: 100%;
 }
 
-.legend {
+/* Caja flotante compartida por la leyenda y el panel de estadísticas */
+.panel {
   position: absolute;
-  bottom: 1.5rem;
-  right: 1rem;
   z-index: 1000;
+  max-width: calc(100% - 2rem);
   background: #fffc;
   backdrop-filter: blur(2px);
   padding: 0.5rem 0.75rem;
@@ -63,13 +87,13 @@ header h1 {
   color: #111;
 }
 
-.legend ul {
+.panel ul {
   list-style: none;
   margin: 0.25rem 0 0;
   padding: 0;
 }
 
-.legend li {
+.panel li {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -82,4 +106,90 @@ header h1 {
   border: 1px solid #0003;
   border-radius: 2px;
   flex: none;
+}
+
+.stats-panel {
+  top: 1rem;
+  left: 1rem;
+  min-width: 15rem;
+}
+
+.stats-label {
+  flex: 1;
+}
+
+.stats-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-total {
+  margin: 0.5rem 0 0;
+  padding-top: 0.4rem;
+  border-top: 1px solid #0002;
+}
+
+/* Comparador antes/después */
+.compare {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.compare-images {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.compare-images img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  user-select: none;
+}
+
+.compare-after {
+  position: absolute;
+  inset: 0;
+}
+
+.compare-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.compare-label {
+  position: absolute;
+  top: 0.75rem;
+  background: #0008;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.compare-label-left {
+  left: 0.75rem;
+}
+
+.compare-label-right {
+  right: 0.75rem;
+}
+
+.compare-slider {
+  width: 100%;
+  margin: 0;
 }

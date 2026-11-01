@@ -20,7 +20,10 @@ const style: StyleFunction = (feature) => {
 
 function onEachFeature(feature: Feature, layer: Layer) {
   const { severity, area_ha } = feature.properties as SeverityProperties
-  layer.bindPopup(`${severity}<br>${area_ha.toLocaleString("es-ES")} ha`)
+  // useGrouping explícito: "auto" (el default) no pone separador de miles en
+  // números de 4 cifras en es-ES (1048,9 en vez de 1.048,9).
+  const area = area_ha.toLocaleString("es-ES", { useGrouping: true })
+  layer.bindPopup(`${severity}<br>${area} ha`)
 }
 
 export default function SeverityMap({ data }: SeverityMapProps) {
