@@ -15,16 +15,26 @@ from pystac import Item
 from pystac_client import Client
 
 from config import BBOX, DATE_RANGE_AFTER, DATE_RANGE_BEFORE
-from load_bands import EPSG, SCL_CLOUD_SHADOW_WATER
+from load_bands import EPSG
 from search_scenes import CATALOG_URL, best_scene
 
 RGB_BANDS = ["B04", "B03", "B02"]
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
+# Nubes/sombra/cirros, pero sin la clase 6 (agua): a diferencia de
+# load_bands.SCL_CLOUD_SHADOW_WATER (que sí la tapa, porque el agua rompe el
+# cálculo de NBR), acá se vio que el SCL clasifica "agua" de forma muy
+# inconsistente entre escenas (0.6% del cuadro en la escena de antes, 45.8%
+# en la de después — básicamente todo el océano en una sí y en la otra no),
+# lo que tapaba casi medio comparador de negro en una sola de las dos fotos.
+# Como esto es una imagen visual, no un insumo de NBR, mostrar el agua real
+# (aunque a veces tenga glint/ruido) es preferible a ese parche negro.
+RGB_CLOUD_SHADOW = [3, 8, 9, 10]
+
 
 def load_true_color(item: Item) -> xr.DataArray:
-    """Carga B04/B03/B02 (rojo/verde/azul), recortadas al bbox, con nubes/
-    sombras/agua en NaN (misma máscara SCL que load_bands.load_clean_bands)."""
+    """Carga B04/B03/B02 (rojo/verde/azul), recortadas al bbox, con nubes,
+    sombras y cirros en NaN (el agua se deja ver, ver RGB_CLOUD_SHADOW)."""
     signed_item = planetary_computer.sign(item)
     stack = stackstac.stack(
         [signed_item],
@@ -35,7 +45,7 @@ def load_true_color(item: Item) -> xr.DataArray:
     ).squeeze("time")
 
     scl = stack.sel(band="SCL")
-    is_dirty = scl.isin(SCL_CLOUD_SHADOW_WATER)
+    is_dirty = scl.isin(RGB_CLOUD_SHADOW)
     return stack.sel(band=RGB_BANDS).where(~is_dirty)
 
 
