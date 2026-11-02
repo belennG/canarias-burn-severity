@@ -21,20 +21,21 @@ from search_scenes import CATALOG_URL, best_scene
 RGB_BANDS = ["B04", "B03", "B02"]
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
-# Nubes/sombra/cirros, pero sin la clase 6 (agua): a diferencia de
-# load_bands.SCL_CLOUD_SHADOW_WATER (que sí la tapa, porque el agua rompe el
-# cálculo de NBR), acá se vio que el SCL clasifica "agua" de forma muy
-# inconsistente entre escenas (0.6% del cuadro en la escena de antes, 45.8%
-# en la de después — básicamente todo el océano en una sí y en la otra no),
-# lo que tapaba casi medio comparador de negro en una sola de las dos fotos.
-# Como esto es una imagen visual, no un insumo de NBR, mostrar el agua real
-# (aunque a veces tenga glint/ruido) es preferible a ese parche negro.
-RGB_CLOUD_SHADOW = [3, 8, 9, 10]
+# Sombra de nube, nube media/alta probabilidad, cirros: no se usan para
+# ocultar píxeles (eso fue el bug del agua y de las nubes negras — ver el
+# historial de este archivo), sino solo para EXCLUIRLOS del cálculo del
+# estiramiento de contraste en to_rgba(). Una nube es mucho más brillante
+# que cualquier terreno real; si entra en la cuenta del percentil 98, corre
+# el "blanco de referencia" tan arriba que todo el paisaje normal queda
+# aplastado y oscuro.
+CLOUD_LIKE = [3, 8, 9, 10]
 
 
-def load_true_color(item: Item) -> xr.DataArray:
-    """Carga B04/B03/B02 (rojo/verde/azul), recortadas al bbox, con nubes,
-    sombras y cirros en NaN (el agua se deja ver, ver RGB_CLOUD_SHADOW)."""
+def load_true_color(item: Item) -> tuple[xr.DataArray, xr.DataArray]:
+    """Carga B04/B03/B02 (rojo/verde/azul) y la máscara de nube/sombra/cirros
+    (ver CLOUD_LIKE), recortadas al bbox. Ningún píxel se oculta en la
+    imagen final — la máscara solo se usa para las estadísticas de
+    contraste en to_rgba()."""
     signed_item = planetary_computer.sign(item)
     stack = stackstac.stack(
         [signed_item],
@@ -43,20 +44,22 @@ def load_true_color(item: Item) -> xr.DataArray:
         epsg=EPSG,
         resolution=20,
     ).squeeze("time")
+    rgb = stack.sel(band=RGB_BANDS)
+    is_cloud_like = stack.sel(band="SCL").isin(CLOUD_LIKE)
+    return rgb, is_cloud_like
 
-    scl = stack.sel(band="SCL")
-    is_dirty = scl.isin(RGB_CLOUD_SHADOW)
-    return stack.sel(band=RGB_BANDS).where(~is_dirty)
 
-
-def to_rgba(rgb: xr.DataArray) -> np.ndarray:
-    """Convierte las 3 bandas crudas a una imagen RGBA 0-1: estiramiento de
-    contraste por banda (percentiles 2-98) y alpha=0 donde no hay dato."""
+def to_rgba(rgb: xr.DataArray, is_cloud_like: xr.DataArray) -> np.ndarray:
+    """Convierte las 3 bandas crudas a una imagen RGBA 0-1. El estiramiento
+    de contraste (percentiles 2-98) se calcula solo con los píxeles que no
+    son nube/sombra/cirros, pero se aplica a TODOS — una nube de verdad
+    termina saturada en blanco puro, que es como se ve en la realidad."""
     data = rgb.values  # (3, alto, ancho), orden R,G,B
+    clear = ~is_cloud_like.values  # (alto, ancho)
     stretched = np.empty_like(data, dtype="float64")
     for i in range(3):
         band = data[i]
-        low, high = np.nanpercentile(band, [2, 98])
+        low, high = np.nanpercentile(band[clear], [2, 98])
         stretched[i] = np.clip((band - low) / (high - low), 0, 1)
 
     alpha = np.where(np.isnan(data).any(axis=0), 0.0, 1.0)
@@ -75,7 +78,7 @@ def main() -> None:
         ("Antes", before_item, "rgb_before.png"),
         ("Después", after_item, "rgb_after.png"),
     ]:
-        rgba = to_rgba(load_true_color(item))
+        rgba = to_rgba(*load_true_color(item))
         output_path = DATA_DIR / filename
         plt.imsave(output_path, rgba, origin="upper")
         print(f"{label}: guardado en {output_path}")
