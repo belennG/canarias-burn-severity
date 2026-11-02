@@ -42,12 +42,12 @@ cobertura del perímetro oficial 79,1%, precisión 91,9% — ver `pipeline/valid
 
 ```mermaid
 flowchart LR
-    A["Sentinel-2 L2A\n(Planetary Computer, STAC)"] --> B["pipeline/\nNBR, dNBR, severidad, vectorizar"]
-    B --> C[("PostGIS\n(Docker)")]
-    C --> D["API\n(FastAPI)"]
-    D --> E["Visor\n(React + Leaflet)"]
-    B -. export_static.py .-> F["web/public/\nGeoJSON + JPG"]
-    F --> G["Netlify\n(deploy estatico)"]
+    A["Sentinel-2 L2A<br/>Planetary Computer, STAC"] --> B["pipeline/<br/>NBR, dNBR, severidad, vectorizar"]
+    B --> C[("PostGIS<br/>Docker")]
+    C --> D["API<br/>FastAPI"]
+    D --> E["Visor<br/>React + Leaflet"]
+    B -.->|export_static.py| F["web/public<br/>GeoJSON + JPG"]
+    F --> G["Netlify<br/>deploy estatico"]
 ```
 
 `pipeline/` corre local (necesita red, para bajar las escenas). `api/` y la base de datos
