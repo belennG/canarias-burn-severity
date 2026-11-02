@@ -1,8 +1,8 @@
 # canaries-burn-severity
 
 Severidad del incendio de Tenerife (agosto 2023) a partir de imágenes Sentinel-2 de antes y
-después del fuego. Proyecto para la entrevista con Telespazio Ibérica (Software Engineer
-GIS/GeoAI, Fuerteventura).
+después del fuego: pipeline de procesamiento, API, base de datos espacial y visor web, de
+punta a punta.
 
 ## Problema
 
@@ -240,5 +240,15 @@ python3 -m pytest
 - [x] #11 Comparador antes/después y panel
 - [x] #12 Deploy
 - [x] #13 README final
-- [ ] #14 Preparación de la entrevista
-- [ ] #15 Clasificador con machine learning (extra)
+- [x] #15 Clasificador con machine learning (extra) — evaluado, no implementado (ver nota abajo)
+
+### Sobre el #15 (Random Forest)
+
+Se evaluó entrenar un Random Forest quemado/no-quemado (features: B8A/B12 antes y después,
+NBR, dNBR; etiqueta: perímetro oficial de Copernicus EMS). La idea en sí es válida — hay
+millones de píxeles como ejemplos, no "un solo dato" — pero se decidió no implementarla:
+todos esos píxeles salen del mismo incendio, mismo lugar, mismas dos fechas. Un modelo
+entrenado así podría funcionar bien evaluado dentro de este mismo evento, pero no hay forma
+de afirmar que generalice a otro incendio, en otra vegetación o época del año. Sin más de un
+evento para entrenar/validar, el valor agregado sobre el método de umbral fijo (NBR/dNBR,
+USGS) no se puede demostrar de forma honesta.
